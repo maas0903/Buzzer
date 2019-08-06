@@ -15,12 +15,10 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.GpioPinPwmOutput;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinState;
-import static com.pi4j.io.gpio.PinState.HIGH;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.wiringpi.Gpio;
 import static com.pi4j.wiringpi.Gpio.OUTPUT;
 import static com.pi4j.wiringpi.Gpio.digitalWrite;
-import static com.pi4j.wiringpi.Gpio.pinMode;
 import static com.pi4j.wiringpi.Gpio.pinModeAlt;
 import com.pi4j.wiringpi.SoftTone;
 import java.time.LocalTime;
@@ -146,52 +144,21 @@ public class Buzzer
 
     public static void PassiveBuzzerPwm(GpioController gpio, String[] args) throws InterruptedException
     {
-        /*final GpioPinPwmOutput buzzerPin = gpio.provisionPwmOutputPin(RaspiPin.GPIO_01);
-        //buzzerPin.setShutdownOptions(true, PinState.LOW);
-        //PwmExample
-        buzzerPin.setMode(PinMode.PWM_OUTPUT);
-        buzzerPin.setPwm(50);
-        buzzerPin.setPwmRange(1024);*/
-
-        // create Pi4J console wrapper/helper
-        // (This is a utility class to abstract some of the boilerplate code)
-        ////final Console console = new Console();
-        // print program title/header
-        ////console.title("<-- The Pi4J Project -->", "PWM Example");
-        // allow for user to exit program using CTRL-C
-        ////console.promptForExit();
-        // create GPIO controller instance
-        //GpioController gpio = GpioFactory.getInstance();
-        // All Raspberry Pi models support a hardware PWM pin on GPIO_01.
-        // Raspberry Pi models A+, B+, 2B, 3B also support hardware PWM pins: GPIO_23, GPIO_24, GPIO_26
-        //
-        // by default we will use gpio pin #01; however, if an argument
-        // has been provided, then lookup the pin by address
-//        Pin pin = CommandArgumentParser.getPin(
-//                RaspiPin.class, // pin provider class to obtain pin instance from
-//                RaspiPin.GPIO_01, // default pin if no pin argument found
-//                args);             // argument array to search in
         Pin pin = RaspiPin.GPIO_23;
 
-        GpioPinPwmOutput pwm = gpio.provisionPwmOutputPin(pin);
+        GpioPinPwmOutput pwm = gpio.provisionPwmOutputPin(pin, "pwm1", OUTPUT);
 
-        // you can optionally use these wiringPi methods to further customize the PWM generator
-        // see: http://wiringpi.com/reference/raspberry-pi-specifics/
-        com.pi4j.wiringpi.Gpio.pwmSetMode(com.pi4j.wiringpi.Gpio.PWM_MODE_MS);
+        // ref: http://wiringpi.com/reference/raspberry-pi-specifics/
+        com.pi4j.wiringpi.Gpio.pwmSetMode(com.pi4j.wiringpi.Gpio.PWM_OUTPUT);
         com.pi4j.wiringpi.Gpio.pwmSetRange(1000);
         com.pi4j.wiringpi.Gpio.pwmSetClock(500);
 
-        // set the PWM rate to 500
         pwm.setPwm(500);
 
-        // set the PWM rate to 250
         pwm.setPwm(250);
 
-        // set the PWM rate to 0
         pwm.setPwm(0);
 
-        // stop all GPIO activity/threads by shutting down the GPIO controller
-        // (this method will forcefully shutdown all GPIO monitoring threads and scheduled tasks)
         gpio.shutdown();
     }
 
@@ -203,8 +170,8 @@ public class Buzzer
     {
         //ActiveBuzzer(GpioFactory.getInstance());
         //PassiveBuzzer();
-        //PassiveBuzzerPwm(GpioFactory.getInstance(), args);
-        TestGpioPinsRaw(GpioFactory.getInstance());
+        PassiveBuzzerPwm(GpioFactory.getInstance(), args);
+        //TestGpioPinsRaw(GpioFactory.getInstance());
         //TestGpioPins();
     }
 }
